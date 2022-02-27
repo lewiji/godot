@@ -2122,7 +2122,9 @@ bool CSharpScript::_update_exports(PlaceHolderScriptInstance *p_instance_to_upda
 	if (exports_invalidated)
 #endif
 	{
+#ifdef TOOLS_ENABLED
 		exports_invalidated = false;
+#endif
 
 		changed = true;
 
@@ -2166,6 +2168,7 @@ bool CSharpScript::_update_exports(PlaceHolderScriptInstance *p_instance_to_upda
 #endif
 					});
 
+#ifdef TOOLS_ENABLED
 			GDMonoCache::managed_callbacks.ScriptManagerBridge_GetPropertyDefaultValues(this,
 					[](CSharpScript *p_script, GDMonoCache::godotsharp_property_def_val_pair *p_def_vals, int32_t p_count) {
 						for (int i = 0; i < p_count; i++) {
@@ -2177,6 +2180,7 @@ bool CSharpScript::_update_exports(PlaceHolderScriptInstance *p_instance_to_upda
 							p_script->exported_members_defval_cache[name] = value;
 						}
 					});
+#endif
 		}
 	}
 
