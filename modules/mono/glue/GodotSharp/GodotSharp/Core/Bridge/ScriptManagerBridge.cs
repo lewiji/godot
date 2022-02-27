@@ -27,7 +27,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
             }
         }
 
@@ -53,7 +53,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugPrintUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 return IntPtr.Zero;
             }
         }
@@ -108,7 +108,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugPrintUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 return false.ToGodotBool();
             }
         }
@@ -148,7 +148,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 *outRes = default;
             }
         }
@@ -164,7 +164,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
             }
         }
 
@@ -277,7 +277,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugPrintUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 *outOwnerIsNull = false.ToGodotBool();
             }
         }
@@ -371,7 +371,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 *outRetSignals = NativeFuncs.godotsharp_dictionary_new();
             }
         }
@@ -422,7 +422,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 return false.ToGodotBool();
             }
         }
@@ -442,7 +442,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 return false.ToGodotBool();
             }
         }
@@ -470,7 +470,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 return false.ToGodotBool();
             }
         }
@@ -521,7 +521,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
             }
         }
 
@@ -593,7 +593,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 *outTool = false.ToGodotBool();
                 *outRpcFunctionsDest = NativeFuncs.godotsharp_dictionary_new();
             }
@@ -624,7 +624,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
                 *outNewGCHandlePtr = IntPtr.Zero;
                 return false.ToGodotBool();
             }
@@ -667,7 +667,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
             }
         }
 
@@ -759,7 +759,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
             }
         }
 
@@ -796,7 +796,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
             }
         }
 
@@ -884,7 +884,7 @@ namespace Godot.Bridge
             }
             catch (Exception e)
             {
-                ExceptionUtils.DebugUnhandledException(e);
+                ExceptionUtils.LogException(e);
             }
         }
     }
