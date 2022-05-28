@@ -263,13 +263,13 @@ namespace Godot.SourceGenerators
             {
                 if (propertySymbol.GetMethod == null)
                 {
-                    Common.ReportExportedMemberIsReadOnly(context, propertySymbol);
+                    Common.ReportExportedMemberIsWriteOnly(context, propertySymbol);
                     return null;
                 }
 
                 if (propertySymbol.SetMethod == null)
                 {
-                    Common.ReportExportedMemberIsWriteOnly(context, propertySymbol);
+                    Common.ReportExportedMemberIsReadOnly(context, propertySymbol);
                     return null;
                 }
             }
