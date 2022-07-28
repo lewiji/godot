@@ -207,9 +207,9 @@ namespace Godot.Bridge
                 // Save instance state
 
                 var info = new GodotSerializationInfo(
-                    Collections.Dictionary<StringName, object>.CreateTakingOwnershipOfDisposableValue(
+                    Collections.Dictionary.CreateTakingOwnershipOfDisposableValue(
                         NativeFuncs.godotsharp_dictionary_new_copy(*propertiesState)),
-                    Collections.Dictionary<StringName, Collections.Array>.CreateTakingOwnershipOfDisposableValue(
+                    Collections.Dictionary.CreateTakingOwnershipOfDisposableValue(
                         NativeFuncs.godotsharp_dictionary_new_copy(*signalEventsState)));
 
                 godotObject.SaveGodotObjectData(info);
@@ -237,9 +237,9 @@ namespace Godot.Bridge
                 // Restore instance state
 
                 var info = new GodotSerializationInfo(
-                    Collections.Dictionary<StringName, object>.CreateTakingOwnershipOfDisposableValue(
+                    Collections.Dictionary.CreateTakingOwnershipOfDisposableValue(
                         NativeFuncs.godotsharp_dictionary_new_copy(*propertiesState)),
-                    Collections.Dictionary<StringName, Collections.Array>.CreateTakingOwnershipOfDisposableValue(
+                    Collections.Dictionary.CreateTakingOwnershipOfDisposableValue(
                         NativeFuncs.godotsharp_dictionary_new_copy(*signalEventsState)));
 
                 godotObject.RestoreGodotObjectData(info);

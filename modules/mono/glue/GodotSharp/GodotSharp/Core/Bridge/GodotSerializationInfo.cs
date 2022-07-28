@@ -1,35 +1,34 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Godot.Bridge;
 
 public class GodotSerializationInfo
 {
-    private readonly Collections.Dictionary<StringName, object> _properties = new();
-    private readonly Collections.Dictionary<StringName, Collections.Array> _signalEvents = new();
+    private readonly Collections.Dictionary _properties = new();
+    private readonly Collections.Dictionary _signalEvents = new();
 
     internal GodotSerializationInfo()
     {
     }
 
     internal GodotSerializationInfo(
-        Collections.Dictionary<StringName, object> properties,
-        Collections.Dictionary<StringName, Collections.Array> signalEvents
+        Collections.Dictionary properties,
+        Collections.Dictionary signalEvents
     )
     {
         _properties = properties;
         _signalEvents = signalEvents;
     }
 
-    public void AddProperty(StringName name, object value)
+    public void AddProperty(StringName name, Variant value)
     {
         _properties[name] = value;
     }
 
-    public bool TryGetProperty<T>(StringName name, [MaybeNullWhen(false)] out T value)
+    public bool TryGetProperty(StringName name, out Variant value)
     {
-        return _properties.TryGetValueAsType(name, out value);
+        return _properties.TryGetValue(name, out value);
     }
 
     public void AddSignalEventDelegate(StringName name, Delegate eventDelegate)
@@ -49,9 +48,9 @@ public class GodotSerializationInfo
     public bool TryGetSignalEventDelegate<T>(StringName name, [MaybeNullWhen(false)] out T value)
         where T : Delegate
     {
-        if (_signalEvents.TryGetValue(name, out Collections.Array serializedData))
+        if (_signalEvents.TryGetValue(name, out Variant serializedData))
         {
-            if (DelegateUtils.TryDeserializeDelegate(serializedData, out var eventDelegate))
+            if (DelegateUtils.TryDeserializeDelegate(serializedData.AsGodotArray(), out var eventDelegate))
             {
                 value = eventDelegate as T;
 

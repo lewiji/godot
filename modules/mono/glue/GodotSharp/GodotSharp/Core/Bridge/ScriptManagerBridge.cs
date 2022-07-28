@@ -606,8 +606,8 @@ namespace Godot.Bridge
                                     methodParams.Add(new Collections.Dictionary()
                                     {
                                         { "name", param.Name },
-                                        { "type", param.Type },
-                                        { "usage", param.Usage }
+                                        { "type", (int)param.Type },
+                                        { "usage", (int)param.Usage }
                                     });
                                 }
                             }
@@ -624,7 +624,7 @@ namespace Godot.Bridge
 
                 // RPC functions
 
-                Collections.Dictionary<string, Collections.Dictionary> rpcFunctions = new();
+                Collections.Dictionary rpcFunctions = new();
 
                 top = scriptType;
 
@@ -661,7 +661,7 @@ namespace Godot.Bridge
                 }
 
                 *outRpcFunctionsDest = NativeFuncs.godotsharp_dictionary_new_copy(
-                    (godot_dictionary)((Collections.Dictionary)rpcFunctions).NativeValue);
+                    (godot_dictionary)(rpcFunctions).NativeValue);
 
                 // Event signals
 
@@ -692,8 +692,8 @@ namespace Godot.Bridge
                                     signalParams.Add(new Collections.Dictionary()
                                     {
                                         { "name", param.Name },
-                                        { "type", param.Type },
-                                        { "usage", param.Usage }
+                                        { "type", (int)param.Type },
+                                        { "usage", (int)param.Usage }
                                     });
                                 }
                             }

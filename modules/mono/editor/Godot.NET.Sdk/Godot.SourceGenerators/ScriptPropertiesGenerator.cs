@@ -289,7 +289,7 @@ namespace Godot.SourceGenerators
                 .Append("            ")
                 .Append(propertyMemberName)
                 .Append(" = ")
-                .AppendVariantToManagedExpr("value", propertyTypeSymbol, propertyMarshalType)
+                .AppendNativeVariantToManagedExpr("value", propertyTypeSymbol, propertyMarshalType)
                 .Append(";\n")
                 .Append("            return true;\n")
                 .Append("        }\n");
@@ -311,7 +311,7 @@ namespace Godot.SourceGenerators
                 .Append(propertyMemberName)
                 .Append(") {\n")
                 .Append("            value = ")
-                .AppendManagedToVariantExpr(propertyMemberName, propertyMarshalType)
+                .AppendManagedToNativeVariantExpr(propertyMemberName, propertyMarshalType)
                 .Append(";\n")
                 .Append("            return true;\n")
                 .Append("        }\n");

@@ -31,7 +31,7 @@ namespace GodotTools.Export
 
             if (exitCode == 0)
             {
-                string output = (string)outputWrapper[0];
+                string output = outputWrapper[0].AsString();
                 return output.Trim();
             }
 
