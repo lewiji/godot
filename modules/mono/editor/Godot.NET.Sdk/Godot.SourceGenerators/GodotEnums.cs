@@ -2,6 +2,8 @@ using System;
 
 namespace Godot.SourceGenerators
 {
+    // TODO: May need to think about compatibility here. Could Godot change these values between minor versions?
+
     internal enum VariantType
     {
         Nil = 0,
@@ -130,5 +132,19 @@ namespace Godot.SourceGenerators
         Default = 6,
         DefaultIntl = 38,
         NoEditor = 2
+    }
+
+    public enum MethodFlags
+    {
+        Normal = 1,
+        Editor = 2,
+        Noscript = 4,
+        Const = 8,
+        Reverse = 16,
+        Virtual = 32,
+        FromScript = 64,
+        Static = 256,
+        ObjectCore = 512,
+        Default = 1
     }
 }
