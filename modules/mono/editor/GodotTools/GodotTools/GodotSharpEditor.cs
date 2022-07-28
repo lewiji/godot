@@ -44,7 +44,7 @@ namespace GodotTools
         {
             get
             {
-                string projectAssemblyName = (string)ProjectSettings.GetSetting("application/config/name");
+                string projectAssemblyName = ProjectSettings.GetSetting("application/config/name").AsString();
                 projectAssemblyName = projectAssemblyName.ToSafeDirName();
                 if (string.IsNullOrEmpty(projectAssemblyName))
                     projectAssemblyName = "UnnamedProject";
@@ -175,7 +175,7 @@ namespace GodotTools
         [UsedImplicitly]
         public Error OpenInExternalEditor(Script script, int line, int col)
         {
-            var editorId = (ExternalEditorId)_editorSettings.GetSetting("mono/editor/external_editor");
+            var editorId = (ExternalEditorId)_editorSettings.GetSetting("mono/editor/external_editor").AsInt32();
 
             switch (editorId)
             {
@@ -327,7 +327,7 @@ namespace GodotTools
         [UsedImplicitly]
         public bool OverridesExternalEditor()
         {
-            return (ExternalEditorId)_editorSettings.GetSetting("mono/editor/external_editor") != ExternalEditorId.None;
+            return (ExternalEditorId)_editorSettings.GetSetting("mono/editor/external_editor").AsInt32() != ExternalEditorId.None;
         }
 
         public override bool _Build()
@@ -521,7 +521,7 @@ namespace GodotTools
                     // Otherwise, if the GC disposes it at a later time, EditorExportPlatformAndroid
                     // will be freed after EditorSettings already was, and its device polling thread
                     // will try to access the EditorSettings singleton, resulting in null dereferencing.
-                    (_exportPluginWeak.GetRef() as ExportPlugin)?.Dispose();
+                    (_exportPluginWeak.GetRef().AsGodotObject() as ExportPlugin)?.Dispose();
 
                     _exportPluginWeak.Dispose();
                 }

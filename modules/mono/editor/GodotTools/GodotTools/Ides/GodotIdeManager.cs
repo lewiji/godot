@@ -77,7 +77,7 @@ namespace GodotTools.Ides
         public async Task<EditorPick?> LaunchIdeAsync(int millisecondsTimeout = 10000)
         {
             var editorId = (ExternalEditorId)GodotSharpEditor.Instance.GetEditorInterface()
-                .GetEditorSettings().GetSetting("mono/editor/external_editor");
+                .GetEditorSettings().GetSetting("mono/editor/external_editor").AsInt32();
             string editorIdentity = GetExternalEditorIdentity(editorId);
 
             var runningServer = GetRunningOrNewServer();

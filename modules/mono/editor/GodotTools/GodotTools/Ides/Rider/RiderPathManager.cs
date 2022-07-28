@@ -15,14 +15,14 @@ namespace GodotTools.Ides.Rider
         {
             var editorSettings = GodotSharpEditor.Instance.GetEditorInterface().GetEditorSettings();
             if (editorSettings.HasSetting(EditorPathSettingName))
-                return (string)editorSettings.GetSetting(EditorPathSettingName);
+                return editorSettings.GetSetting(EditorPathSettingName).AsString();
             return null;
         }
 
         public static void Initialize()
         {
             var editorSettings = GodotSharpEditor.Instance.GetEditorInterface().GetEditorSettings();
-            var editor = (ExternalEditorId)editorSettings.GetSetting("mono/editor/external_editor");
+            var editor = (ExternalEditorId)editorSettings.GetSetting("mono/editor/external_editor").AsInt32();
             if (editor == ExternalEditorId.Rider)
             {
                 if (!editorSettings.HasSetting(EditorPathSettingName))
@@ -37,7 +37,7 @@ namespace GodotTools.Ides.Rider
                     });
                 }
 
-                var riderPath = (string)editorSettings.GetSetting(EditorPathSettingName);
+                var riderPath = editorSettings.GetSetting(EditorPathSettingName).AsString();
                 if (IsRiderAndExists(riderPath))
                 {
                     Globals.EditorDef(EditorPathSettingName, riderPath);
@@ -58,7 +58,7 @@ namespace GodotTools.Ides.Rider
         public static bool IsExternalEditorSetToRider(EditorSettings editorSettings)
         {
             return editorSettings.HasSetting(EditorPathSettingName) &&
-                IsRider((string)editorSettings.GetSetting(EditorPathSettingName));
+                IsRider(editorSettings.GetSetting(EditorPathSettingName).AsString());
         }
 
         public static bool IsRider(string path)

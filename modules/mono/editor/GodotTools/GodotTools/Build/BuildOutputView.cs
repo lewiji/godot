@@ -124,7 +124,7 @@ namespace GodotTools.Build
                 throw new IndexOutOfRangeException("Item list index out of range");
 
             // Get correct issue idx from issue list
-            int issueIndex = (int)(long)_issuesList.GetItemMetadata(idx);
+            int issueIndex = _issuesList.GetItemMetadata(idx).AsInt32();
 
             if (issueIndex < 0 || issueIndex >= _issues.Count)
                 throw new IndexOutOfRangeException("Issue index out of range");

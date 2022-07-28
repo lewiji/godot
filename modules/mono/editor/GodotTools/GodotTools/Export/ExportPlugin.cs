@@ -52,7 +52,7 @@ namespace GodotTools.Export
 
             // TODO What if the source file is not part of the game's C# project
 
-            bool includeScriptsContent = (bool)ProjectSettings.GetSetting("mono/export/include_scripts_content");
+            bool includeScriptsContent = ProjectSettings.GetSetting("mono/export/include_scripts_content").AsBool();
 
             if (!includeScriptsContent)
             {
@@ -224,7 +224,7 @@ namespace GodotTools.Export
 
         private static string DetermineDataDirNameForProject()
         {
-            string appName = (string)ProjectSettings.GetSetting("application/config/name");
+            string appName = ProjectSettings.GetSetting("application/config/name").AsString();
             string appNameSafe = appName.ToSafeDirName();
             return $"data_{appNameSafe}";
         }
