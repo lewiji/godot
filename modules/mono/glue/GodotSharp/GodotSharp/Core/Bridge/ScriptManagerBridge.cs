@@ -554,7 +554,8 @@ namespace Godot.Bridge
 
         [UnmanagedCallersOnly]
         internal static unsafe void UpdateScriptClassInfo(IntPtr scriptPtr, godot_bool* outTool,
-            godot_dictionary* outRpcFunctionsDest, godot_dictionary* outEventSignalsDest, godot_ref* outBaseScript)
+            godot_dictionary* outMethodsDest, godot_dictionary* outRpcFunctionsDest,
+            godot_dictionary* outEventSignalsDest, godot_ref* outBaseScript)
         {
             try
             {
@@ -575,12 +576,57 @@ namespace Godot.Bridge
                 if (!(*outTool).ToBool() && scriptType.Assembly.GetName().Name == "GodotTools")
                     *outTool = godot_bool.True;
 
+                // Methods
+
+                // Performance is not critical here as this will be replaced with source generators.
+                using var methods = new Collections.Dictionary();
+
+                Type? top = scriptType;
+                Type native = Object.InternalGetClassNativeBase(top);
+
+                while (top != null && top != native)
+                {
+                    var methodList = GetMethodListForType(top);
+
+                    if (methodList != null)
+                    {
+                        foreach (var method in methodList)
+                        {
+                            string methodName = method.Name;
+
+                            if (methods.ContainsKey(methodName))
+                                continue;
+
+                            var methodParams = new Collections.Array();
+
+                            if (method.Arguments != null)
+                            {
+                                foreach (var param in method.Arguments)
+                                {
+                                    methodParams.Add(new Collections.Dictionary()
+                                    {
+                                        { "name", param.Name },
+                                        { "type", param.Type },
+                                        { "usage", param.Usage }
+                                    });
+                                }
+                            }
+
+                            methods.Add(methodName, methodParams);
+                        }
+                    }
+
+                    top = top.BaseType;
+                }
+
+                *outMethodsDest = NativeFuncs.godotsharp_dictionary_new_copy(
+                    (godot_dictionary)methods.NativeValue);
+
                 // RPC functions
 
                 Collections.Dictionary<string, Collections.Dictionary> rpcFunctions = new();
 
-                Type? top = scriptType;
-                Type native = Object.InternalGetClassNativeBase(top);
+                top = scriptType;
 
                 while (top != null && top != native)
                 {
@@ -614,9 +660,8 @@ namespace Godot.Bridge
                     top = top.BaseType;
                 }
 
-                *outRpcFunctionsDest =
-                    NativeFuncs.godotsharp_dictionary_new_copy(
-                        (godot_dictionary)((Collections.Dictionary)rpcFunctions).NativeValue);
+                *outRpcFunctionsDest = NativeFuncs.godotsharp_dictionary_new_copy(
+                    (godot_dictionary)((Collections.Dictionary)rpcFunctions).NativeValue);
 
                 // Event signals
 
@@ -660,8 +705,8 @@ namespace Godot.Bridge
                     top = top.BaseType;
                 }
 
-                *outEventSignalsDest =
-                    NativeFuncs.godotsharp_dictionary_new_copy((godot_dictionary)signals.NativeValue);
+                *outEventSignalsDest = NativeFuncs.godotsharp_dictionary_new_copy(
+                    (godot_dictionary)signals.NativeValue);
 
                 // Base script
 
@@ -696,6 +741,19 @@ namespace Godot.Bridge
                 return null;
 
             return (List<MethodInfo>?)getGodotSignalListMethod.Invoke(null, null);
+        }
+
+        private static List<MethodInfo>? GetMethodListForType(Type type)
+        {
+            var getGodotMethodListMethod = type.GetMethod(
+                "GetGodotMethodList",
+                BindingFlags.DeclaredOnly | BindingFlags.Static |
+                BindingFlags.NonPublic | BindingFlags.Public);
+
+            if (getGodotMethodListMethod == null)
+                return null;
+
+            return (List<MethodInfo>?)getGodotMethodListMethod.Invoke(null, null);
         }
 
         // ReSharper disable once InconsistentNaming

@@ -1561,29 +1561,19 @@ Variant::Type CSharpInstance::get_property_type(const StringName &p_name, bool *
 }
 
 void CSharpInstance::get_method_list(List<MethodInfo> *p_list) const {
-#warning TODO
-#if 0
-	if (!script->is_valid() || !script->script_class) {
+	if (!script->is_valid() || !script->valid) {
 		return;
 	}
 
-	GD_MONO_SCOPE_THREAD_ATTACH;
-
-	// TODO: We're filtering out constructors but there may be other methods unsuitable for explicit calls.
-	GDMonoClass *top = script->script_class;
-
-	while (top && top != script->native) {
-		const Vector<GDMonoMethod *> &methods = top->get_all_methods();
-		for (int i = 0; i < methods.size(); ++i) {
-			MethodInfo minfo = methods[i]->get_method_info();
-			if (minfo.name != CACHED_STRING_NAME(dotctor)) {
-				p_list->push_back(minfo);
-			}
+	const CSharpScript *top = script.ptr();
+	while (top != nullptr) {
+		for (const KeyValue<StringName, MethodInfo> &E : top->methods) {
+			MethodInfo mi = E.value;
+			p_list->push_back(mi);
 		}
 
-		top = top->get_parent_class();
+		top = top->base_script.ptr();
 	}
-#endif
 }
 
 bool CSharpInstance::has_method(const StringName &p_method) const {
@@ -2127,24 +2117,46 @@ void CSharpScript::reload_registered_script(Ref<CSharpScript> p_script) {
 void CSharpScript::update_script_class_info(Ref<CSharpScript> p_script) {
 	bool tool = false;
 
+	// TODO: Use GDNative godot_dictionary
+	Dictionary methods_dict;
+	methods_dict.~Dictionary();
 	Dictionary rpc_functions_dict;
-	// Destructor won't be called from C#, and I don't want to include the GDNative header
-	// only for this, so need to call the destructor manually before passing this to C#.
 	rpc_functions_dict.~Dictionary();
-
 	Dictionary signals_dict;
-	// Destructor won't be called from C#, and I don't want to include the GDNative header
-	// only for this, so need to call the destructor manually before passing this to C#.
 	signals_dict.~Dictionary();
 
 	Ref<CSharpScript> base_script;
 	GDMonoCache::managed_callbacks.ScriptManagerBridge_UpdateScriptClassInfo(
-			p_script.ptr(), &tool, &rpc_functions_dict, &signals_dict, &base_script);
+			p_script.ptr(), &tool, &methods_dict, &rpc_functions_dict, &signals_dict, &base_script);
 
 	p_script->tool = tool;
 
 	p_script->rpc_config.clear();
 	p_script->rpc_config = rpc_functions_dict;
+
+	// Methods
+
+	p_script->methods.clear();
+
+	for (const Variant *s = methods_dict.next(nullptr); s != nullptr; s = methods_dict.next(s)) {
+		StringName name = *s;
+
+		MethodInfo mi;
+		mi.name = name;
+
+		Array params = methods_dict[*s];
+
+		for (int i = 0; i < params.size(); i++) {
+			Dictionary param = params[i];
+
+			Variant::Type param_type = (Variant::Type)(int)param["type"];
+			PropertyInfo arg_info = PropertyInfo(param_type, (String)param["name"]);
+			arg_info.usage = (uint32_t)param["usage"];
+			mi.arguments.push_back(arg_info);
+		}
+
+		p_script->methods[name] = mi;
+	}
 
 	// Event signals
 
@@ -2351,29 +2363,23 @@ void CSharpScript::get_script_method_list(List<MethodInfo> *p_list) const {
 		return;
 	}
 
-#warning TODO
-#if 0
-	// TODO: We're filtering out constructors but there may be other methods unsuitable for explicit calls.
-	GDMonoClass *top = script_class;
-
-	while (top && top != native) {
-		const Vector<GDMonoMethod *> &methods = top->get_all_methods();
-		for (int i = 0; i < methods.size(); ++i) {
-			MethodInfo minfo = methods[i]->get_method_info();
-			if (minfo.name != CACHED_STRING_NAME(dotctor)) {
-				p_list->push_back(methods[i]->get_method_info());
-			}
+	const CSharpScript *top = this;
+	while (top != nullptr) {
+		for (const KeyValue<StringName, MethodInfo> &E : top->methods) {
+			MethodInfo mi = E.value;
+			p_list->push_back(mi);
 		}
 
-		top = top->get_parent_class();
+		top = top->base_script.ptr();
 	}
-#endif
 }
 
 bool CSharpScript::has_method(const StringName &p_method) const {
-	// The equivalent of this will be implemented once we switch to the GDExtension system
-	ERR_PRINT_ONCE("CSharpScript::has_method is not implemented");
-	return false;
+	if (!valid) {
+		return false;
+	}
+
+	return methods.has(p_method);
 }
 
 MethodInfo CSharpScript::get_method_info(const StringName &p_method) const {
@@ -2381,21 +2387,13 @@ MethodInfo CSharpScript::get_method_info(const StringName &p_method) const {
 		return MethodInfo();
 	}
 
-#warning TODO
-#if 0
-	GDMonoClass *top = script_class;
+	HashMap<StringName, MethodInfo>::ConstIterator E = methods.find(p_method);
 
-	while (top && top != native) {
-		GDMonoMethod *params = top->get_method_unknown_params(p_method);
-		if (params) {
-			return params->get_method_info();
-		}
-
-		top = top->get_parent_class();
+	if (!E) {
+		return MethodInfo();
 	}
-#endif
 
-	return MethodInfo();
+	return E->value;
 }
 
 Error CSharpScript::reload(bool p_keep_state) {
