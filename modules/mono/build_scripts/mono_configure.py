@@ -91,6 +91,7 @@ def configure(env, env_mono):
         libnethost_path = os.path.join(app_host_dir, "libnethost.lib" if os.name == "nt" else "libnethost.a")
 
         if env["platform"] == "windows":
+            env_mono.Append(CPPDEFINES=["NETHOST_USE_AS_STATIC"])
             if env.msvc:
                 env.Append(LINKFLAGS="libnethost.lib")
             else:
