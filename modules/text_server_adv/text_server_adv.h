@@ -158,7 +158,7 @@ class TextServerAdvanced : public TextServerExtension {
 
 	// ICU support data.
 
-	bool icu_data_loaded = false;
+	static bool icu_data_loaded;
 	mutable USet *allowed = nullptr;
 	mutable USpoofChecker *sc_spoof = nullptr;
 	mutable USpoofChecker *sc_conf = nullptr;
@@ -615,6 +615,8 @@ class TextServerAdvanced : public TextServerExtension {
 	Glyph _shape_single_glyph(ShapedTextDataAdvanced *p_sd, char32_t p_char, hb_script_t p_script, hb_direction_t p_direction, const RID &p_font, int64_t p_font_size);
 
 	_FORCE_INLINE_ void _add_featuers(const Dictionary &p_source, Vector<hb_feature_t> &r_ftrs);
+
+	Mutex ft_mutex;
 
 	// HarfBuzz bitmap font interface.
 

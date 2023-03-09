@@ -765,6 +765,7 @@ bool DisplayServerMacOS::has_feature(Feature p_feature) const {
 		case FEATURE_SWAP_BUFFERS:
 		case FEATURE_TEXT_TO_SPEECH:
 		case FEATURE_EXTEND_TO_TITLE:
+		case FEATURE_SCREEN_CAPTURE:
 			return true;
 		default: {
 		}
@@ -2249,6 +2250,35 @@ Rect2i DisplayServerMacOS::screen_get_usable_rect(int p_screen) const {
 	return Rect2i();
 }
 
+Color DisplayServerMacOS::screen_get_pixel(const Point2i &p_position) const {
+	Point2i position = p_position;
+	// OS X native y-coordinate relative to _get_screens_origin() is negative,
+	// Godot passes a positive value.
+	position.y *= -1;
+	position += _get_screens_origin();
+	position /= screen_get_max_scale();
+
+	for (NSScreen *screen in [NSScreen screens]) {
+		NSRect frame = [screen frame];
+		if (NSMouseInRect(NSMakePoint(position.x, position.y), frame, NO)) {
+			NSDictionary *screenDescription = [screen deviceDescription];
+			CGDirectDisplayID display_id = [[screenDescription objectForKey:@"NSScreenNumber"] unsignedIntValue];
+			CGImageRef image = CGDisplayCreateImageForRect(display_id, CGRectMake(position.x - frame.origin.x, frame.size.height - (position.y - frame.origin.y), 1, 1));
+			if (image) {
+				NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithCGImage:image];
+				CGImageRelease(image);
+				NSColor *color = [bitmap colorAtX:0 y:0];
+				if (color) {
+					CGFloat components[4];
+					[color getRed:&components[0] green:&components[1] blue:&components[2] alpha:&components[3]];
+					return Color(components[0], components[1], components[2], components[3]);
+				}
+			}
+		}
+	}
+	return Color();
+}
+
 float DisplayServerMacOS::screen_get_refresh_rate(int p_screen) const {
 	_THREAD_SAFE_METHOD_
 
@@ -3617,15 +3647,15 @@ DisplayServer *DisplayServerMacOS::create_func(const String &p_rendering_driver,
 		if (p_rendering_driver == "vulkan") {
 			String executable_command;
 			if (OS::get_singleton()->get_bundle_resource_dir() == OS::get_singleton()->get_executable_path().get_base_dir()) {
-				executable_command = vformat("%s --rendering-driver opengl3", OS::get_singleton()->get_executable_path());
+				executable_command = vformat("\"%s\" --rendering-driver opengl3", OS::get_singleton()->get_executable_path());
 			} else {
-				executable_command = vformat("open %s --args --rendering-driver opengl3", OS::get_singleton()->get_bundle_resource_dir().path_join("../..").simplify_path());
+				executable_command = vformat("open \"%s\" --args --rendering-driver opengl3", OS::get_singleton()->get_bundle_resource_dir().path_join("../..").simplify_path());
 			}
 			OS::get_singleton()->alert(
 					vformat("Your video card drivers seem not to support the required Vulkan version.\n\n"
 							"If possible, consider updating your macOS version or using the OpenGL 3 driver.\n\n"
 							"You can enable the OpenGL 3 driver by starting the engine from the\n"
-							"command line with the command:\n'%s'",
+							"command line with the command:\n\n    %s",
 							executable_command),
 					"Unable to initialize Vulkan video driver");
 		} else {

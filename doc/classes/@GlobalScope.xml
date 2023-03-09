@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="@GlobalScope" version="4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+<class name="@GlobalScope" version="4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
 	<brief_description>
 		Global scope constants and functions.
 	</brief_description>
@@ -2773,6 +2773,7 @@
 			The property is shown in the [EditorInspector] (default).
 		</constant>
 		<constant name="PROPERTY_USAGE_INTERNAL" value="8" enum="PropertyUsageFlags" is_bitfield="true">
+			The property is excluded from the class reference.
 		</constant>
 		<constant name="PROPERTY_USAGE_CHECKABLE" value="16" enum="PropertyUsageFlags" is_bitfield="true">
 			The property can be checked in the [EditorInspector].

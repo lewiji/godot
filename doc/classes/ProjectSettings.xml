@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="ProjectSettings" inherits="Object" version="4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+<class name="ProjectSettings" inherits="Object" version="4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
 	<brief_description>
 		Contains global variables accessible from everywhere.
 	</brief_description>
@@ -247,9 +247,6 @@
 		</member>
 		<member name="application/config/description" type="String" setter="" getter="" default="&quot;&quot;">
 			The project's description, displayed as a tooltip in the Project Manager when hovering the project.
-		</member>
-		<member name="application/config/features" type="PackedStringArray" setter="" getter="">
-			List of internal features associated with the project, like [code]Double Precision[/code] or [code]C#[/code]. Not to be confused with feature tags.
 		</member>
 		<member name="application/config/icon" type="String" setter="" getter="" default="&quot;&quot;">
 			Icon used for the project, set when project loads. Exporters will also use this icon when possible.
@@ -1161,12 +1158,6 @@
 		<member name="internationalization/locale/test" type="String" setter="" getter="" default="&quot;&quot;">
 			If non-empty, this locale will be used when running the project from the editor.
 		</member>
-		<member name="internationalization/locale/translation_remaps" type="PackedStringArray" setter="" getter="">
-			Locale-dependent resource remaps. Edit them in the "Localization" tab of Project Settings editor.
-		</member>
-		<member name="internationalization/locale/translations" type="PackedStringArray" setter="" getter="">
-			List of translation files available in the project. Edit them in the "Localization" tab of Project Settings editor.
-		</member>
 		<member name="internationalization/pseudolocalization/double_vowels" type="bool" setter="" getter="" default="false">
 			Double vowels in strings during pseudolocalization to simulate the lengthening of text due to localization.
 		</member>
@@ -1196,7 +1187,10 @@
 			[b]Note:[/b] This property is only read when the project starts. To toggle pseudolocalization at run-time, use [member TranslationServer.pseudolocalization_enabled] instead.
 		</member>
 		<member name="internationalization/rendering/force_right_to_left_layout_direction" type="bool" setter="" getter="" default="false">
-			Force layout direction and text writing direction to RTL for all locales.
+			Force layout direction and text writing direction to RTL for all controls.
+		</member>
+		<member name="internationalization/rendering/root_node_layout_direction" type="int" setter="" getter="" default="0">
+			Root node default layout direction.
 		</member>
 		<member name="internationalization/rendering/text_driver" type="String" setter="" getter="" default="&quot;&quot;">
 			Specifies the [TextServer] to use. If left empty, the default will be used.
